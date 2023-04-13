@@ -1,8 +1,9 @@
 name: docker pub x86
 on:
   push:
-    tags:
-      - '*'
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 env:
   REGISTRY: ghcr.io
