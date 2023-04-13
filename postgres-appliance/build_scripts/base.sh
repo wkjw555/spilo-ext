@@ -132,7 +132,7 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         "${EXTRAS[@]}"
 
     # Install 3rd party stuff
-    apt-get install -y uuid
+    apt-get install -y libuuid-devel
 
     (
         cd clickhouse_fdw
