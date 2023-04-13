@@ -132,6 +132,7 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         "${EXTRAS[@]}"
 
     # Install 3rd party stuff
+    apt-get install -y uuid
 
     (
         cd clickhouse_fdw
