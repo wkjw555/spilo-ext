@@ -20,11 +20,11 @@ ARCH="$(dpkg --print-architecture)"
 
 echo -e 'APT::Install-Recommends "0";\nAPT::Install-Suggests "0";' > /etc/apt/apt.conf.d/01norecommend
 
-go version
-#go env -w GO111MODULE=on
-#go env -w GOPROXY=https://goproxy.cn,direct
+apt-get update
+apt-get install -y curl ca-certificates
 
-git clone -b "$WALG_VERSION" --recurse-submodules https://github.com/wal-g/wal-g.git
-cd /wal-g
-go get -v -t -d ./...
-go mod vendor
+apt-get install -y software-properties-common gpg-agent
+add-apt-repository ppa:longsleep/golang-backports
+apt-get update
+apt-get install -y golang-go liblzo2-dev brotli libsodium-dev git make cmake gcc libc-dev
+go version
