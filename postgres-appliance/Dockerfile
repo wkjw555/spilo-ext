@@ -21,19 +21,11 @@ ARG DEMO
 
 ENV WALG_VERSION=v2.0.1
 
+COPY build_scripts/dependencies.sh /builddeps/
+
 COPY dependencies/debs /builddeps/
 
-COPY build_scripts/dependencies-apt.sh /builddeps/
-RUN bash /builddeps/dependencies-apt.sh
-
-COPY build_scripts/dependencies-apt-extra.sh /builddeps/
-RUN bash /builddeps/dependencies-apt-extra.sh
-
-COPY build_scripts/dependencies.sh /builddeps/
 RUN bash /builddeps/dependencies.sh
-
-COPY build_scripts/dependencies-post.sh /builddeps/
-RUN bash /builddeps/dependencies-post.sh
 
 
 FROM $BASE_IMAGE as builder-false
