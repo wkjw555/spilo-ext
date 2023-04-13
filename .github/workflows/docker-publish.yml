@@ -1,4 +1,4 @@
-name: Publish multiarch images on ghcr.io
+name: docker pub
 on:
   push:
     tags:
