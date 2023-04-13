@@ -36,7 +36,7 @@ jobs:
       working-directory: postgres-appliance
       run: |
         PGVERSION=$(sed -n 's/^ARG PGVERSION=\([1-9][0-9]*\).*$/\1/p' Dockerfile)
-        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$PGVERSION:${GITHUB_REF/refs\/tags\//}"
+        IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-$PGVERSION:$(date +'%Y%m%d_%H%M%S')"
         echo "NAME=$IMAGE" >> $GITHUB_OUTPUT
 
     - name: Set up Docker Buildx
