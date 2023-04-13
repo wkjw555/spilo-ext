@@ -1,4 +1,4 @@
-name: docker pub qemu
+name: docker pub x86
 on:
   push:
     tags:
