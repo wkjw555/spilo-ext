@@ -57,9 +57,12 @@ curl -sL "https://github.com/zalando-pg/pg_auth_mon/archive/$PG_AUTH_MON_COMMIT.
 curl -sL "https://github.com/cybertec-postgresql/pg_permissions/archive/$PG_PERMISSIONS_COMMIT.tar.gz" | tar xz
 curl -sL "https://github.com/hughcapet/pg_tm_aux/archive/$PG_TM_AUX_COMMIT.tar.gz" | tar xz
 curl -sL "https://github.com/zubkov-andrei/pg_profile/archive/$PG_PROFILE.tar.gz" | tar xz
-curl -sL "https://github.com/citusdata/pg_cron/archive/$PG_CRON_COMMIT.tar.gz" | tar xz
 git clone -b "$SET_USER" https://github.com/pgaudit/set_user.git
 git clone https://github.com/timescale/timescaledb.git
+
+git clone https://github.com/ildus/clickhouse_fdw.git
+git clone https://github.com/pgMemento/pgMemento.git
+git clone https://github.com/supabase/wrappers.git supabase-wrappers
 
 apt-get install -y \
     postgresql-common \
@@ -119,6 +122,7 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
 
     # Install PostgreSQL binaries, contrib, plproxy and multiple pl's
     apt-get install --allow-downgrades -y \
+        "postgresql-${version}-cron" \
         "postgresql-contrib-${version}" \
         "postgresql-${version}-pgextwlist" \
         "postgresql-plpython3-${version}" \
@@ -128,6 +132,26 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         "${EXTRAS[@]}"
 
     # Install 3rd party stuff
+
+    (
+        cd clickhouse_fdw
+        git checkout "$(git describe --tags --abbrev=0)"
+        mkdir build && cd build
+        cmake ..
+        make && make install
+    )
+
+    (
+        cd pgMemento
+        git checkout "$(git describe --tags --abbrev=0)"
+        make && make install
+    )
+
+    (
+        cargo install --locked cargo-pgx
+        cd supabase-wrappers/wrappers
+        cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw
+    )
 
     # use subshell to avoid having to cd back (SC2103)
     (
@@ -177,7 +201,6 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
             pg_permissions-${PG_PERMISSIONS_COMMIT} \
             pg_tm_aux-${PG_TM_AUX_COMMIT} \
             pg_profile-${PG_PROFILE} \
-            pg_cron-${PG_CRON_COMMIT} \
             "${EXTRA_EXTENSIONS[@]}"; do
         make -C "$n" USE_PGXS=1 clean install-strip
     done
