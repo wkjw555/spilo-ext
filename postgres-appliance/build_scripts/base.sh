@@ -96,7 +96,7 @@ apt-get install -y --no-install-recommends \
 
 mkdir supabase-wrappers
 chown -R postgres supabase-wrappers
-su postgres <<'EOF'
+su postgres <<'EOM'
 curl -sSf https://sh.rustup.rs | sh -s -- -y
 PATH="~/.cargo/bin:${PATH}"
 cargo --version
@@ -104,7 +104,7 @@ cargo install --version '=0.6.1' cargo-pgx --locked
 cargo pgx init --pg15 pg_config
 
 git clone https://github.com/supabase/wrappers.git supabase-wrappers
-EOF
+EOM
 ###
 
 # forbid creation of a main cluster when package is installed
