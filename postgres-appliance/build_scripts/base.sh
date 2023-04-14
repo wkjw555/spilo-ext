@@ -144,11 +144,11 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         make && make install
     )
 
-    (
-        cd pgMemento
-        git checkout "$(git describe --tags --abbrev=0)"
-        make && make install
-    )
+#    (
+#        cd pgMemento
+#        git checkout "$(git describe --tags --abbrev=0)"
+#        make && make install
+#    )
 
     (
         cargo install --locked cargo-pgx
