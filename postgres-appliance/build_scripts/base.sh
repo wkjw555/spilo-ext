@@ -94,6 +94,8 @@ apt-get install -y --no-install-recommends \
     make \
     zlib1g-dev
 
+mkdir supabase-wrappers
+chown -R postgres supabase-wrappers
 su postgres <<'EOF'
 curl -sSf https://sh.rustup.rs | sh -s -- -y
 PATH="~/.cargo/bin:${PATH}"
