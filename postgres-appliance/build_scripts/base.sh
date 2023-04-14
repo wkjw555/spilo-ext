@@ -93,7 +93,6 @@ apt-get install -y --no-install-recommends \
     libz-dev \
     make \
     zlib1g-dev
-rustc -V
 
 su postgres <<'EOF'
 curl -sSf https://sh.rustup.rs | sh -s -- -y
