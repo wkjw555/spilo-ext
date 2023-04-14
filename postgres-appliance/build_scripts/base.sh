@@ -132,7 +132,9 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         "${EXTRAS[@]}"
 
     # Install 3rd party stuff
-    apt-get install -y libuuid-devel
+
+    apt-get install -y --no-install-recommends curl python3 build-essential musl-dev openssl libssl-dev cmake util-linux uuid-dev libcurl4-openssl-dev pkg-config postgresql-server-dev-all rustc
+    rustc -V
 
     (
         cd clickhouse_fdw

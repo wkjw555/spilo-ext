@@ -29,9 +29,6 @@ apt-get update
 apt-get install -y golang-go liblzo2-dev brotli libsodium-dev git make cmake gcc libc-dev
 go version
 
-apt-get install -y rustc uuid
-rustc -V
-
 git clone -b "$WALG_VERSION" --recurse-submodules https://github.com/wal-g/wal-g.git
 cd /wal-g
 go get -v -t -d ./...
