@@ -60,10 +60,6 @@ curl -sL "https://github.com/zubkov-andrei/pg_profile/archive/$PG_PROFILE.tar.gz
 git clone -b "$SET_USER" https://github.com/pgaudit/set_user.git
 git clone https://github.com/timescale/timescaledb.git
 
-git clone https://github.com/ildus/clickhouse_fdw.git
-git clone https://github.com/pgMemento/pgMemento.git
-git clone https://github.com/supabase/wrappers.git supabase-wrappers
-
 apt-get install -y \
     postgresql-common \
     libevent-2.1 \
@@ -72,6 +68,43 @@ apt-get install -y \
     libbrotli1 \
     python3.10 \
     python3-psycopg2
+
+###
+git clone https://github.com/ildus/clickhouse_fdw.git
+
+apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    python3 \
+    build-essential \
+    musl-dev \
+    openssl \
+    libssl-dev \
+    cmake \
+    util-linux \
+    uuid-dev \
+    libcurl4-openssl-dev \
+    pkg-config \
+    postgresql-$PGVERSION \
+    postgresql-server-dev-$PGVERSION \
+    clang \
+    git \
+    gcc \
+    libz-dev \
+    make \
+    zlib1g-dev
+rustc -V
+
+su postgres <<'EOF'
+curl -sSf https://sh.rustup.rs | sh -s -- -y
+PATH="~/.cargo/bin:${PATH}"
+cargo --version
+cargo install --version '=0.6.1' cargo-pgx --locked
+cargo pgx init --pg15 pg_config
+
+git clone https://github.com/supabase/wrappers.git supabase-wrappers
+EOF
+###
 
 # forbid creation of a main cluster when package is installed
 sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf
@@ -133,9 +166,6 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
 
     # Install 3rd party stuff
 
-    apt-get install -y --no-install-recommends curl python3 build-essential musl-dev openssl libssl-dev cmake util-linux uuid-dev libcurl4-openssl-dev pkg-config postgresql-server-dev-all rustc
-    rustc -V
-
     (
         cd clickhouse_fdw
         git checkout "$(git describe --tags --abbrev=0)"
@@ -144,16 +174,11 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         make && make install
     )
 
-#    (
-#        cd pgMemento
-#        git checkout "$(git describe --tags --abbrev=0)"
-#        make && make install
-#    )
-
     (
-        cargo install --locked cargo-pgx
         cd supabase-wrappers/wrappers
+        su postgres <<'EOF'
         cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw
+        EOF
     )
 
     # use subshell to avoid having to cd back (SC2103)
