@@ -173,7 +173,7 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
     )
 
     (
-        chown -R postgres:postgres /usr/share/postgresql/15
+        chown -R postgres:postgres /usr/lib/postgresql/15
 su - postgres <<-EOM
         cd ~/supabase-wrappers/wrappers
         cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw,pg15
