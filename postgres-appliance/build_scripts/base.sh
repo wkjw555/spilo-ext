@@ -70,11 +70,10 @@ apt-get install -y \
     python3-psycopg2
 
 ###
-git clone https://github.com/ildus/clickhouse_fdw.git
 
+git clone https://github.com/ildus/clickhouse_fdw.git
 apt-get install -y --no-install-recommends \
     curl \
-    ca-certificates \
     python3 \
     build-essential \
     musl-dev \
@@ -85,24 +84,32 @@ apt-get install -y --no-install-recommends \
     uuid-dev \
     libcurl4-openssl-dev \
     pkg-config \
-    postgresql-$PGVERSION \
-    postgresql-server-dev-$PGVERSION \
-    clang \
-    git \
-    gcc \
-    libz-dev \
-    make \
-    zlib1g-dev
+    postgresql-server-dev-$PGVERSION
 
-su - postgres <<-EOM
-    cd ~
-    curl -sSf https://sh.rustup.rs | sh -s -- -y
-    source ~/.cargo/env
-    cargo --version
-    cargo install --version "=0.6.1" cargo-pgx --locked
-    cargo pgx init --pg15 "/usr/lib/postgresql/15/bin/pg_config"
-    git clone https://github.com/supabase/wrappers.git ~/supabase-wrappers
-EOM
+#apt-get install -y --no-install-recommends \
+#    build-essential \
+#    curl \
+#    clang \
+#    git \
+#    gcc \
+#    libssl-dev \
+#    libz-dev \
+#    make \
+#    pkg-config \
+#    postgresql-$PGVERSION \
+#    postgresql-server-dev-$PGVERSION \
+#    zlib1g-dev \
+#    ca-certificates
+
+#su - postgres <<-EOM
+#    cd ~
+#    curl -sSf https://sh.rustup.rs | sh -s -- -y
+#    source ~/.cargo/env
+#    cargo --version
+#    cargo install --version "=0.6.1" cargo-pgx --locked
+#    cargo pgx init --pg15 "/usr/lib/postgresql/15/bin/pg_config"
+#    git clone https://github.com/supabase/wrappers.git ~/supabase-wrappers
+#EOM
 
 # forbid creation of a main cluster when package is installed
 sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf
@@ -172,14 +179,14 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
         make && make install
     )
 
-    (
-        chown -R postgres:postgres /usr/lib/postgresql/15
-        chown -R postgres:postgres /usr/share/postgresql/15
-su - postgres <<-EOM
-        cd ~/supabase-wrappers/wrappers
-        cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw,pg15
-EOM
-    )
+#    (
+#        chown -R postgres:postgres /usr/lib/postgresql/15
+#        chown -R postgres:postgres /usr/share/postgresql/15
+#su - postgres <<-EOM
+#        cd ~/supabase-wrappers/wrappers
+#        cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features all_fdw,pg15
+#EOM
+#    )
 
     # use subshell to avoid having to cd back (SC2103)
     (
@@ -374,3 +381,9 @@ rm -rf /var/lib/apt/lists/* \
         /usr/lib/postgresql/*/bin/pg_standby \
         /usr/lib/postgresql/*/bin/pltcl_*
 find /var/log -type f -exec truncate --size 0 {} \;
+
+su - postgres <<-EOM
+    rm -rf ~/supabase-wrappers \
+           ~/.cargo \
+           ~/.rustup
+EOM
