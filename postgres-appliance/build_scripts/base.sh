@@ -94,15 +94,14 @@ apt-get install -y --no-install-recommends \
     make \
     zlib1g-dev
 
-mkdir supabase-wrappers
-chown -R postgres supabase-wrappers
-su - postgres <<-'EOM'
+su - postgres <<-EOM
+    cd ~
     curl -sSf https://sh.rustup.rs | sh -s -- -y
     source ~/.cargo/env
     cargo --version
     cargo install --version "=0.6.1" cargo-pgx --locked
     cargo pgx init --pg15 pg_config
-    git clone https://github.com/supabase/wrappers.git supabase-wrappers
+    git clone https://github.com/supabase/wrappers.git ~/supabase-wrappers
 EOM
 
 # forbid creation of a main cluster when package is installed
@@ -174,8 +173,8 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
     )
 
     (
-        cd supabase-wrappers/wrappers
 su - postgres <<-EOM
+        cd ~/supabase-wrappers/wrappers
         cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw
 EOM
     )
