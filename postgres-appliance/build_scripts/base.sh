@@ -100,7 +100,7 @@ su - postgres <<-EOM
     source ~/.cargo/env
     cargo --version
     cargo install --version "=0.6.1" cargo-pgx --locked
-    cargo pgx init --pg15 pg_config
+    cargo pgx init --pg15 "/usr/lib/postgresql/15/bin/pg_config"
     git clone https://github.com/supabase/wrappers.git ~/supabase-wrappers
 EOM
 
