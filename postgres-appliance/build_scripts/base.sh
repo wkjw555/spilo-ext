@@ -96,16 +96,14 @@ apt-get install -y --no-install-recommends \
 
 mkdir supabase-wrappers
 chown -R postgres supabase-wrappers
-su postgres <<'EOM'
-curl -sSf https://sh.rustup.rs | sh -s -- -y
-PATH="~/.cargo/bin:${PATH}"
-cargo --version
-cargo install --version '=0.6.1' cargo-pgx --locked
-cargo pgx init --pg15 pg_config
-
-git clone https://github.com/supabase/wrappers.git supabase-wrappers
+su - postgres <<-'EOM'
+    curl -sSf https://sh.rustup.rs | sh -s -- -y
+    source ~/.cargo/env
+    cargo --version
+    cargo install --version "=0.6.1" cargo-pgx --locked
+    cargo pgx init --pg15 pg_config
+    git clone https://github.com/supabase/wrappers.git supabase-wrappers
 EOM
-###
 
 # forbid creation of a main cluster when package is installed
 sed -ri 's/#(create_main_cluster) .*$/\1 = false/' /etc/postgresql-common/createcluster.conf
@@ -177,9 +175,9 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
 
     (
         cd supabase-wrappers/wrappers
-        su postgres <<'EOF'
+su - postgres <<-EOM
         cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw
-        EOF
+EOM
     )
 
     # use subshell to avoid having to cd back (SC2103)
