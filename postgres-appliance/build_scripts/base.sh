@@ -175,7 +175,7 @@ for version in $DEB_PG_SUPPORTED_VERSIONS; do
     (
 su - postgres <<-EOM
         cd ~/supabase-wrappers/wrappers
-        cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw
+        cargo pgx install --pg-config "/usr/lib/postgresql/$version/bin/pg_config" --features clickhouse_fdw,pg15
 EOM
     )
 
